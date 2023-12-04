@@ -92,6 +92,9 @@ def packet_callback(packet):
         if not (src_ip.startswith('127.')): #or dst_ip.startswith('127.')):
             packet_count_per_ip[src_ip]= packet_count_per_ip.get(src_ip,0) +1
             print(f"Packet recieve from {src_ip}")
+            with open("ipadress.txt","a") as f:
+                f.write(f"packet recieve from {src_ip}")
+                f.write("\n")
             packet_count_per_minute[minute_key] = packet_count_per_minute.get(minute_key, 0) + 1
             if (packet_count_per_minute[minute_key] > 100) :
                 if packet_count_per_ip[src_ip] > 100:
@@ -99,14 +102,5 @@ def packet_callback(packet):
                 else:
                     incomplete_syn()
                     incomplete_get()
-            '''
-            print(f"Flag: More than 2000 packets from {src_ip}")
-            filen='log.csv'
-            data={f"first":[src_ip]}
-            df=pd.DataFrame(data)
-            df.to_csv(filen,mode='a',index=False,header=not pd.read_csv(filen).shape[0])
-        '''
-
-
 sniff(prn=packet_callback, store=0, timeout=60 , filter="inbound and not src host 127.0.0.1")
 
